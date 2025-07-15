@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lifix – Emergency QR Code System</title>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-light: #e0e7ff;
+      --accent: #e11d48;
+      --card: #fff;
+      --background: #f3f4f6;
+      --shadow: 0 8px 32px rgba(80,60,200,0.08), 0 1.5px 6px rgba(80,60,200,0.04);
+      --radius: 1.2rem;
+      --gap: 1.2rem;
+      --transition: 0.28s cubic-bezier(.4,0,.2,1);
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--background);
+      color: #232323;
+    }
+    header {
+      background: linear-gradient(92deg, var(--primary) 60%, var(--accent) 120%);
+      color: #fff;
+      padding: 2.2rem 1rem 1.1rem 1rem;
+      text-align: center;
+      border-bottom-left-radius: 2.3rem;
+      border-bottom-right-radius: 2.3rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .logo-top-right {
+      position: absolute;
+      top: 16px;
+      right: 14px;
+      width: 56px;
+      height: 56px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.11);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: box-shadow .2s;
+    }
+    .logo-top-right img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      border-radius: 8px;
+      display: block;
+    }
+    .avatar-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: .8rem;
+    }
+    .avatar-img {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      box-shadow: 0 6px 24px rgba(99,102,241,0.15);
+      animation: fadeInAvatar .9s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes fadeInAvatar {
+      0% { opacity:0; transform: scale(.8);}
+      100%{ opacity:1; transform: scale(1);}
+    }
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: .3rem;
+      letter-spacing: 0.01em;
+    }
+    header .subheading {
+      font-size: 1.09rem;
+      font-weight: 400;
+      color: #e0eafd;
+      margin-top: 0.1rem;
+      letter-spacing: 0.5px;
+    }
+    main {
+      width: 100%;
+      max-width: 410px;
+      margin: 2.2rem auto 1.5rem auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+    }
+    .profile-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem 1.1rem;
+      margin-bottom: var(--gap);
+      animation: fadeInCard .65s;
+      animation-fill-mode: both;
+    }
+    @keyframes fadeInCard {
+      0% { opacity:0; transform: translateY(22px);}
+      100%{ opacity:1; transform: none;}
+    }
+    .profile-name {
+      font-size: 1.32rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 1.1rem;
+      letter-spacing: .01em;
+    }
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      font-size: 1rem;
+      color: #222;
+      padding: .23rem 0;
+    }
+    .info-row .icon {
+      width: 23px;
+      height: 23px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .emergency-contacts {
+      background: var(--card);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 1.2rem 1rem 1.3rem 1rem;
+      animation: fadeInContacts .7s;
+      animation-fill-mode: both;
+    }
+    @keyframes fadeInContacts {
+      0% { opacity:0; transform: translateY(30px);}
+      100%{ opacity:1; transform: none;}
+    }
+    .emergency-contacts h3 {
+      font-size: 1.13rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .emergency-contacts .icon {
+      vertical-align: middle;
+    }
+    .contact-card {
+      background: linear-gradient(96deg, #f3f8ff 70%, #fdfdff 100%);
+      border-radius: 1rem;
+      box-shadow: 0 1.5px 6px rgba(99,102,241,0.05);
+      padding: 1rem .8rem .8rem .8rem;
+      margin-bottom: .8rem;
+      display: flex;
+      flex-direction: column;
+      gap: .7rem;
+      animation: slideIn .7s;
+      animation-fill-mode: both;
+      opacity: 1;
+    }
+    @keyframes slideIn {
+      0% { opacity:0; transform: translateY(35px);}
+      100%{ opacity:1; transform: none;}
+    }
+    .contact-details {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: 1.04rem;
+    }
+    .contact-label {
+      color: var(--primary);
+      font-weight: 600;
+      margin-right: .6rem;
+    }
+    .contact-phone {
+      color: #444;
+      font-size: 1.01rem;
+    }
+    .contact-actions {
+      display: flex;
+      gap: .8rem;
+      margin-left: .1rem;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 7px;
+      padding: .41rem 1.05rem;
+      transition: background var(--transition), box-shadow var(--transition), transform .14s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 1px 4px rgba(99,102,241,.07);
+      cursor: pointer;
+      outline: none;
+      border: 0;
+      background: #f3f4f6;
+      color: var(--primary);
+      position: relative;
+      overflow: hidden;
+    }
+    .action-btn .icon {
+      width: 18px;
+      height: 18px;
+      margin-right: .1rem;
+      display: inline-flex;
+    }
+    .action-btn.call {
+      background: var(--primary);
+      color: #fff;
+    }
+    .action-btn.call:hover,
+    .action-btn.call:focus {
+      background: #4338ca;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 4px 18px #6366f133;
+    }
+    .action-btn.sms {
+      background: #fff;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+    }
+    .action-btn.sms:hover,
+    .action-btn.sms:focus {
+      background: var(--primary-light);
+      border-color: #4338ca;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 4px 14px #6366f122;
+    }
+    footer {
+      text-align: center;
+      padding: 1.3rem .5rem .9rem .5rem;
+      font-size: .98rem;
+      color: #7c7e8b;
+      background: none;
+      margin-top: auto;
+    }
+    @media (max-width: 520px) {
+      main {
+        margin: 1.2rem .1rem .7rem .1rem;
+        max-width: 98vw;
+      }
+      .profile-card, .emergency-contacts {
+        padding: 1rem .4rem;
+      }
+      .contact-card {
+        padding: .7rem .3rem;
+      }
+      header {
+        padding: 1.3rem .2rem 1rem .2rem;
+        border-bottom-left-radius: 1.2rem;
+        border-bottom-right-radius: 1.2rem;
+      }
+      .logo-top-right {
+        width: 40px;
+        height: 40px;
+        top: 8px;
+        right: 8px;
+      }
+      .logo-top-right img {
+        width: 32px;
+        height: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- Top right logo image -->
+    <div class="logo-top-right">
+      <img src="![image1](image1)" alt="Lifix Logo"/>
+    </div>
+    <div class="avatar-wrap">
+      <!-- SVG Avatar -->
+      <svg viewBox="0 0 64 64" class="avatar-img">
+        <circle cx="32" cy="32" r="32" fill="#e0e7ff"/>
+        <circle cx="32" cy="28" r="15" fill="#6366f1"/>
+        <ellipse cx="32" cy="50" rx="18" ry="8" fill="#6366f1" opacity=".13"/>
+        <circle cx="32" cy="28" r="8" fill="#fff" opacity=".7"/>
+      </svg>
+    </div>
+    <h1>Lifix – Your Emergency Identity</h1>
+    <p class="subheading">Chhoti si pehchaan, bachaye jaan</p>
+  </header>
+  <main>
+    <section class="profile-card fade-in">
+      <h2 class="profile-name">Riya Sharma</h2>
+      <div class="info-list">
+        <div class="info-row">
+          <span class="icon">
+            <!-- Blood Group SVG -->
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
+              <ellipse cx="12" cy="12" rx="10" ry="12" fill="#e11d48"/>
+              <text x="12" y="16" font-size="8" font-family="Arial" fill="#fff" text-anchor="middle" alignment-baseline="middle">B+</text>
+            </svg>
+          </span>
+          <span><strong>Blood Group:</strong> B+</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">
+            <!-- Allergy SVG (pill) -->
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
+              <rect x="3" y="12" width="18" height="8" rx="4" fill="#fde68a"/>
+              <rect x="3" y="4" width="18" height="8" rx="4" fill="#fbbf24"/>
+              <rect x="11" y="12" width="2" height="8" fill="#f59e42"/>
+            </svg>
+          </span>
+          <span><strong>Allergies:</strong> Penicillin</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">
+            <!-- Asthma/lungs SVG -->
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
+              <ellipse cx="8.5" cy="14" rx="4" ry="7" fill="#e0f2fe"/>
+              <ellipse cx="15.5" cy="14" rx="4" ry="7" fill="#bae6fd"/>
+              <rect x="11" y="6" width="2" height="12" rx="1" fill="#0891b2"/>
+            </svg>
+          </span>
+          <span><strong>Medical Conditions:</strong> Asthma</span>
+        </div>
+      </div>
+    </section>
+    <section class="emergency-contacts fade-in-up">
+      <h3>
+        <span class="icon">
+          <!-- Phone SVG -->
+          <svg width="21" height="21" fill="none" viewBox="0 0 24 24">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.74 19.74 0 0 1 3.09 5.18 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.35a2 2 0 0 1-.45 2.11l-1.27 1.27a16 16 0 0 0 6.29 6.29l1.27-1.27a2 2 0 0 1 2.11-.45c.75.34 1.54.57 2.35.7A2 2 0 0 1 22 16.92Z" stroke="#2563eb" stroke-width="1.5" fill="none"/>
+          </svg>
+        </span>
+        Emergency Contacts
+      </h3>
+      <div class="contact-card slide-in">
+        <div class="contact-details">
+          <span class="icon">
+            <!-- Mom SVG (female user) -->
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="9" r="5" fill="#f9a8d4"/>
+              <ellipse cx="12" cy="19" rx="8" ry="5" fill="#fbcfe8"/>
+            </svg>
+          </span>
+          <span class="contact-label">Mom</span>
+          <span class="contact-phone">9876543210</span>
+        </div>
+        <div class="contact-actions">
+          <a href="tel:9876543210" class="action-btn call" title="Call Mom">
+            <span class="icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.74 19.74 0 0 1 3.09 5.18 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.35a2 2 0 0 1-.45 2.11l-1.27 1.27a16 16 0 0 0 6.29 6.29l1.27-1.27a2 2 0 0 1 2.11-.45c.75.34 1.54.57 2.35.7A2 2 0 0 1 22 16.92Z" stroke="#fff" stroke-width="1.5" fill="none"/>
+              </svg>
+            </span>
+            Call
+          </a>
+          <a href="sms:9876543210?body=This%20is%20an%20emergency%20from%20Lifix%20QR%20profile." class="action-btn sms" title="Message Mom">
+            <span class="icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="14" rx="3" fill="#6366f1"/>
+                <path d="M3 8l9 5 9-5" stroke="#fff" stroke-width="1.5" fill="none"/>
+              </svg>
+            </span>
+            SMS
+          </a>
+        </div>
+      </div>
+      <div class="contact-card slide-in" style="animation-delay: 0.15s;">
+        <div class="contact-details">
+          <span class="icon">
+            <!-- Dad SVG (male user) -->
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="9" r="5" fill="#93c5fd"/>
+              <ellipse cx="12" cy="19" rx="8" ry="5" fill="#dbeafe"/>
+            </svg>
+          </span>
+          <span class="contact-label">Dad</span>
+          <span class="contact-phone">8765432109</span>
+        </div>
+        <div class="contact-actions">
+          <a href="tel:8765432109" class="action-btn call" title="Call Dad">
+            <span class="icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.74 19.74 0 0 1 3.09 5.18 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.35a2 2 0 0 1-.45 2.11l-1.27 1.27a16 16 0 0 0 6.29 6.29l1.27-1.27a2 2 0 0 1 2.11-.45c.75.34 1.54.57 2.35.7A2 2 0 0 1 22 16.92Z" stroke="#fff" stroke-width="1.5" fill="none"/>
+              </svg>
+            </span>
+            Call
+          </a>
+          <a href="sms:8765432109?body=This%20is%20an%20emergency%20from%20Lifix%20QR%20profile." class="action-btn sms" title="Message Dad">
+            <span class="icon">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="14" rx="3" fill="#6366f1"/>
+                <path d="M3 8l9 5 9-5" stroke="#fff" stroke-width="1.5" fill="none"/>
+              </svg>
+            </span>
+            SMS
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 Lifix. For demonstration purposes only.</p>
+  </footer>
+</body>
+</html>
